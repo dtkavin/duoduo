@@ -4,6 +4,7 @@
  */
 package org.bcsfll.uht.ui.utiliy;
 
+import org.bcsfll.uht.utiliy.FileUtil;
 import java.util.ArrayList;
 import org.junit.After;
 import org.junit.AfterClass;

@@ -4,17 +4,23 @@
  */
 package org.bcsfll.uht.ui;
 
-
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import org.bcsfll.uht.ui.utiliy.FileUtil;
-import org.bcsfll.uht.ui.utiliy.NetUtil;
-import org.bcsfll.uht.ui.utiliy.OSUtil;
+import org.bcsfll.uht.ui.utiliy.ClipboardUtil;
+import org.bcsfll.uht.ui.utiliy.OpenHomePageUtil;
+import org.bcsfll.uht.ui.utiliy.PropertiesUtil;
+import org.bcsfll.uht.utiliy.DateUtil;
+import org.bcsfll.uht.utiliy.FileUtil;
+import org.bcsfll.uht.utiliy.NetUtil;
+import org.bcsfll.uht.utiliy.OSUtil;
 
 /**
  *
@@ -30,11 +36,23 @@ public class HostsTool extends javax.swing.JFrame {
 
     public HostsTool() {
         initComponents();
-       // this.setIconImage(new javax.swing.ImageIcon(getClass().getResource("/org/bcsfll/uht/ui/resources/logo.png"); // NOI18N
+        // this.setIconImage(new javax.swing.ImageIcon(getClass().getResource("/org/bcsfll/uht/ui/resources/logo.png"); // NOI18N
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/org/bcsfll/uht/ui/resources/logo.png")));
         this.setLocationRelativeTo(null);
-        
+        FileChooser_Save.setApproveButtonText("保存hosts");
+        /**
+         *
+         */
+        PropertiesUtil propertiesUtil = PropertiesUtil.getInstance(this.getClass().getResourceAsStream("/org/bcsfll/uht/ui/resources/about.properties"));
 
+        Label_About.setText(propertiesUtil.getValueByKey("desc"));
+        Label_Mail.setText(propertiesUtil.getValueByKey("mail"));
+        Label_HomePage.setText(propertiesUtil.getValueByKey("homepage"));
+        Label_WARA.setText(propertiesUtil.getValueByKey("wara"));
+
+        this.setTitle("HostsTool_" + propertiesUtil.getValueByKey("version"));
+        TextArea_Help.setText(propertiesUtil.getValueByKey("info"));
+        
     }
 
     /**
@@ -54,6 +72,8 @@ public class HostsTool extends javax.swing.JFrame {
         Label_WARA = new javax.swing.JLabel();
         Label_Auther = new javax.swing.JLabel();
         Label_Mail = new javax.swing.JLabel();
+        Label_HomePage = new javax.swing.JLabel();
+        Label_CopyRight = new javax.swing.JLabel();
         Panel_Help = new javax.swing.JPanel();
         ScrollPane_Help = new javax.swing.JScrollPane();
         TextArea_Help = new javax.swing.JTextArea();
@@ -66,6 +86,11 @@ public class HostsTool extends javax.swing.JFrame {
         ToggleButton_License = new javax.swing.JToggleButton();
         Label_Logo = new javax.swing.JLabel();
         Label_Desc = new javax.swing.JLabel();
+        FileChooser_Save = new javax.swing.JFileChooser();
+        PopupMenu_CopyMail = new javax.swing.JPopupMenu();
+        MenuItem_CopyMail = new javax.swing.JMenuItem();
+        PopupMenu_Open = new javax.swing.JPopupMenu();
+        MenuItem_Open = new javax.swing.JMenuItem();
         TabbedPane = new javax.swing.JTabbedPane();
         Panel_Local = new javax.swing.JPanel();
         Button_View = new javax.swing.JButton();
@@ -78,14 +103,24 @@ public class HostsTool extends javax.swing.JFrame {
         Button_Update = new javax.swing.JButton();
         Panel_Params = new javax.swing.JPanel();
         jCheckBox1 = new javax.swing.JCheckBox();
+        jLabel1 = new javax.swing.JLabel();
         jCheckBox2 = new javax.swing.JCheckBox();
+        jLabel2 = new javax.swing.JLabel();
         jCheckBox3 = new javax.swing.JCheckBox();
+        jLabel3 = new javax.swing.JLabel();
         jCheckBox4 = new javax.swing.JCheckBox();
+        jLabel4 = new javax.swing.JLabel();
         jCheckBox5 = new javax.swing.JCheckBox();
+        jLabel5 = new javax.swing.JLabel();
         jCheckBox6 = new javax.swing.JCheckBox();
+        jLabel6 = new javax.swing.JLabel();
         jCheckBox7 = new javax.swing.JCheckBox();
+        jLabel7 = new javax.swing.JLabel();
         jCheckBox8 = new javax.swing.JCheckBox();
+        jLabel8 = new javax.swing.JLabel();
         jCheckBox9 = new javax.swing.JCheckBox();
+        jLabel9 = new javax.swing.JLabel();
+        Button_Save = new javax.swing.JButton();
         Panel_Bak = new javax.swing.JPanel();
         ScrollPane_Bak_Table = new javax.swing.JScrollPane();
         Table_Bak = new javax.swing.JTable();
@@ -95,11 +130,14 @@ public class HostsTool extends javax.swing.JFrame {
         Button_Bak = new javax.swing.JButton();
         Button_Bak_Update = new javax.swing.JButton();
         MenuBar = new javax.swing.JMenuBar();
+        Menu_Tool = new javax.swing.JMenu();
+        MenuItem_DNS = new javax.swing.JMenuItem();
         Menu = new javax.swing.JMenu();
         MenuItem = new javax.swing.JMenuItem();
 
         Dialog_About.setResizable(false);
 
+        Panel_About.setBorder(null);
         Panel_About.setLayout(new java.awt.CardLayout());
 
         Label_Version.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -115,40 +153,74 @@ public class HostsTool extends javax.swing.JFrame {
         Label_Auther.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         Label_Auther.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bcsfll/uht/ui/resources/ah.png"))); // NOI18N
 
+        Label_Mail.setForeground(java.awt.Color.green);
         Label_Mail.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         Label_Mail.setText("bcsflilong@yeah.net");
+        Label_Mail.setToolTipText("作者Email，右键可复制");
+        Label_Mail.setComponentPopupMenu(PopupMenu_CopyMail);
+        Label_Mail.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                Label_MailMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                Label_MailMouseExited(evt);
+            }
+        });
+
+        Label_HomePage.setForeground(java.awt.Color.cyan);
+        Label_HomePage.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        Label_HomePage.setText("http://www.cnblogs.com/bcsflilong/");
+        Label_HomePage.setToolTipText("作者博客主页，右键可打开");
+        Label_HomePage.setComponentPopupMenu(PopupMenu_Open);
+        Label_HomePage.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                Label_HomePageMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                Label_HomePageMouseExited(evt);
+            }
+        });
+
+        Label_CopyRight.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        Label_CopyRight.setText("Copyright © 2014-2016 bcsfll");
 
         javax.swing.GroupLayout Panel_InfoLayout = new javax.swing.GroupLayout(Panel_Info);
         Panel_Info.setLayout(Panel_InfoLayout);
         Panel_InfoLayout.setHorizontalGroup(
             Panel_InfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(Label_Version, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(Label_WARA, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 358, Short.MAX_VALUE)
             .addGroup(Panel_InfoLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(Panel_InfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(Label_WARA, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 467, Short.MAX_VALUE)
-                    .addComponent(Label_Version, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(Label_About, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(Label_About, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(Label_Auther, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(Label_Mail, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(Label_Mail, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(Label_HomePage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(Label_CopyRight, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         Panel_InfoLayout.setVerticalGroup(
             Panel_InfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(Panel_InfoLayout.createSequentialGroup()
                 .addComponent(Label_Version)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(Label_About)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(Label_Auther, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(Label_Auther)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(Label_CopyRight)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(Label_Mail)
-                .addGap(18, 18, 18)
-                .addComponent(Label_WARA)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(Label_HomePage)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(Label_WARA, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         Panel_About.add(Panel_Info, "card2");
 
+        TextArea_Help.setEditable(false);
         TextArea_Help.setColumns(20);
         TextArea_Help.setLineWrap(true);
         TextArea_Help.setRows(5);
@@ -163,14 +235,14 @@ public class HostsTool extends javax.swing.JFrame {
         Panel_HelpLayout.setHorizontalGroup(
             Panel_HelpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(Label_Help, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(ScrollPane_Help, javax.swing.GroupLayout.DEFAULT_SIZE, 491, Short.MAX_VALUE)
+            .addComponent(ScrollPane_Help, javax.swing.GroupLayout.DEFAULT_SIZE, 358, Short.MAX_VALUE)
         );
         Panel_HelpLayout.setVerticalGroup(
             Panel_HelpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, Panel_HelpLayout.createSequentialGroup()
                 .addComponent(Label_Help)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ScrollPane_Help, javax.swing.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE))
+                .addComponent(ScrollPane_Help, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE))
         );
 
         Panel_About.add(Panel_Help, "card3");
@@ -188,7 +260,7 @@ public class HostsTool extends javax.swing.JFrame {
         Panel_License.setLayout(Panel_LicenseLayout);
         Panel_LicenseLayout.setHorizontalGroup(
             Panel_LicenseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(ScrollPane_License, javax.swing.GroupLayout.DEFAULT_SIZE, 491, Short.MAX_VALUE)
+            .addComponent(ScrollPane_License, javax.swing.GroupLayout.DEFAULT_SIZE, 358, Short.MAX_VALUE)
             .addComponent(Label_License, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         Panel_LicenseLayout.setVerticalGroup(
@@ -196,11 +268,12 @@ public class HostsTool extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, Panel_LicenseLayout.createSequentialGroup()
                 .addComponent(Label_License)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ScrollPane_License, javax.swing.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE))
+                .addComponent(ScrollPane_License, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE))
         );
 
         Panel_About.add(Panel_License, "card4");
 
+        ToggleButton_Thinks.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bcsfll/uht/ui/resources/help-about.png"))); // NOI18N
         ToggleButton_Thinks.setText("帮助");
         ToggleButton_Thinks.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -208,6 +281,7 @@ public class HostsTool extends javax.swing.JFrame {
             }
         });
 
+        ToggleButton_License.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bcsfll/uht/ui/resources/license.png"))); // NOI18N
         ToggleButton_License.setText("许可");
         ToggleButton_License.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -228,26 +302,24 @@ public class HostsTool extends javax.swing.JFrame {
             .addGroup(Dialog_AboutLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(Dialog_AboutLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(Label_Logo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, Dialog_AboutLayout.createSequentialGroup()
-                        .addGroup(Dialog_AboutLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(Label_Desc, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(Panel_About, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, Dialog_AboutLayout.createSequentialGroup()
-                                .addComponent(ToggleButton_Thinks, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(ToggleButton_License, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap())))
+                    .addComponent(Panel_About, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(Label_Desc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(Dialog_AboutLayout.createSequentialGroup()
+                        .addComponent(ToggleButton_Thinks, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(ToggleButton_License, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(Label_Logo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         Dialog_AboutLayout.setVerticalGroup(
             Dialog_AboutLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, Dialog_AboutLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(Label_Logo, javax.swing.GroupLayout.PREFERRED_SIZE, 135, Short.MAX_VALUE)
+                .addComponent(Label_Logo, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(Label_Desc)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(Panel_About, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(Panel_About, javax.swing.GroupLayout.PREFERRED_SIZE, 242, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(Dialog_AboutLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(ToggleButton_Thinks)
@@ -255,11 +327,34 @@ public class HostsTool extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        FileChooser_Save.setDialogType(javax.swing.JFileChooser.SAVE_DIALOG);
+        FileChooser_Save.setDialogTitle("保存Hosts");
+        FileChooser_Save.setSelectedFile(new java.io.File("/home/tone/hosts"));
+
+        MenuItem_CopyMail.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bcsfll/uht/ui/resources/editcopy.png"))); // NOI18N
+        MenuItem_CopyMail.setText("复制作者Email");
+        MenuItem_CopyMail.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MenuItem_CopyMailActionPerformed(evt);
+            }
+        });
+        PopupMenu_CopyMail.add(MenuItem_CopyMail);
+
+        MenuItem_Open.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bcsfll/uht/ui/resources/browser.png"))); // NOI18N
+        MenuItem_Open.setText("访问作者博客主页");
+        MenuItem_Open.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MenuItem_OpenActionPerformed(evt);
+            }
+        });
+        PopupMenu_Open.add(MenuItem_Open);
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("HostsTool_V1.0.1");
 
         TabbedPane.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
 
+        Button_View.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bcsfll/uht/ui/resources/logviewer.png"))); // NOI18N
         Button_View.setText("查看本机HOSTS");
         Button_View.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -267,6 +362,7 @@ public class HostsTool extends javax.swing.JFrame {
             }
         });
 
+        TextArea_Local.setEditable(false);
         TextArea_Local.setColumns(20);
         TextArea_Local.setRows(5);
         ScrollPane_Local.setViewportView(TextArea_Local);
@@ -279,7 +375,7 @@ public class HostsTool extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(Panel_LocalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(Button_View, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(ScrollPane_Local, javax.swing.GroupLayout.DEFAULT_SIZE, 801, Short.MAX_VALUE))
+                    .addComponent(ScrollPane_Local, javax.swing.GroupLayout.DEFAULT_SIZE, 990, Short.MAX_VALUE))
                 .addContainerGap())
         );
         Panel_LocalLayout.setVerticalGroup(
@@ -294,6 +390,7 @@ public class HostsTool extends javax.swing.JFrame {
 
         TabbedPane.addTab("本机HOSTS", Panel_Local);
 
+        Button_Get.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bcsfll/uht/ui/resources/download.png"))); // NOI18N
         Button_Get.setText("获取HOSTS");
         Button_Get.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -305,6 +402,7 @@ public class HostsTool extends javax.swing.JFrame {
         TextArea_Net.setRows(5);
         ScrollPane_Net.setViewportView(TextArea_Net);
 
+        Button_Update.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bcsfll/uht/ui/resources/update.png"))); // NOI18N
         Button_Update.setText("更新本机HOSTS");
         Button_Update.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -317,37 +415,72 @@ public class HostsTool extends javax.swing.JFrame {
         jCheckBox1.setText("localhost 部分");
         Panel_Params.add(jCheckBox1);
 
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bcsfll/uht/ui/resources/local.png"))); // NOI18N
+        Panel_Params.add(jLabel1);
+
         jCheckBox2.setSelected(true);
         jCheckBox2.setText("Google");
         Panel_Params.add(jCheckBox2);
+
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bcsfll/uht/ui/resources/google.png"))); // NOI18N
+        Panel_Params.add(jLabel2);
 
         jCheckBox3.setSelected(true);
         jCheckBox3.setText("Wiki");
         Panel_Params.add(jCheckBox3);
 
+        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bcsfll/uht/ui/resources/wikipedia.png"))); // NOI18N
+        Panel_Params.add(jLabel3);
+
         jCheckBox4.setSelected(true);
         jCheckBox4.setText("FaceBook");
         Panel_Params.add(jCheckBox4);
+
+        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bcsfll/uht/ui/resources/facebook.png"))); // NOI18N
+        Panel_Params.add(jLabel4);
 
         jCheckBox5.setSelected(true);
         jCheckBox5.setText("Twitter");
         Panel_Params.add(jCheckBox5);
 
+        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bcsfll/uht/ui/resources/twitter.png"))); // NOI18N
+        Panel_Params.add(jLabel5);
+
         jCheckBox6.setSelected(true);
         jCheckBox6.setText("Filckr");
         Panel_Params.add(jCheckBox6);
+
+        jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bcsfll/uht/ui/resources/flickr.png"))); // NOI18N
+        Panel_Params.add(jLabel6);
 
         jCheckBox7.setSelected(true);
         jCheckBox7.setText("Dropbox");
         Panel_Params.add(jCheckBox7);
 
+        jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bcsfll/uht/ui/resources/dropbox.png"))); // NOI18N
+        Panel_Params.add(jLabel7);
+
         jCheckBox8.setSelected(true);
         jCheckBox8.setText("0neDrive");
         Panel_Params.add(jCheckBox8);
 
+        jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bcsfll/uht/ui/resources/im-msn.png"))); // NOI18N
+        Panel_Params.add(jLabel8);
+
         jCheckBox9.setSelected(true);
         jCheckBox9.setText("Youtube");
         Panel_Params.add(jCheckBox9);
+
+        jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bcsfll/uht/ui/resources/youtube.png"))); // NOI18N
+        Panel_Params.add(jLabel9);
+
+        Button_Save.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bcsfll/uht/ui/resources/save.png"))); // NOI18N
+        Button_Save.setText(" 保存Hosts文件到本地");
+        Button_Save.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Button_SaveActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout Panel_NetLayout = new javax.swing.GroupLayout(Panel_Net);
         Panel_Net.setLayout(Panel_NetLayout);
@@ -359,7 +492,8 @@ public class HostsTool extends javax.swing.JFrame {
                     .addComponent(Button_Get, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(ScrollPane_Net)
                     .addComponent(Button_Update, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(Panel_Params, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(Panel_Params, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(Button_Save, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         Panel_NetLayout.setVerticalGroup(
@@ -370,7 +504,9 @@ public class HostsTool extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(Button_Get)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ScrollPane_Net, javax.swing.GroupLayout.DEFAULT_SIZE, 424, Short.MAX_VALUE)
+                .addComponent(ScrollPane_Net, javax.swing.GroupLayout.DEFAULT_SIZE, 388, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(Button_Save)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(Button_Update)
                 .addContainerGap())
@@ -408,6 +544,7 @@ public class HostsTool extends javax.swing.JFrame {
         Table_Bak.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         Table_Bak.getColumnModel().getColumn(0).setResizable(false);
 
+        Button_Bak_View.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bcsfll/uht/ui/resources/editor.png"))); // NOI18N
         Button_Bak_View.setText("查看选中HOSTS");
         Button_Bak_View.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -415,10 +552,12 @@ public class HostsTool extends javax.swing.JFrame {
             }
         });
 
+        TextArea_Bak.setEditable(false);
         TextArea_Bak.setColumns(20);
         TextArea_Bak.setRows(5);
         ScrollPane_Bak_TextArea.setViewportView(TextArea_Bak);
 
+        Button_Bak.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bcsfll/uht/ui/resources/deja-dup.png"))); // NOI18N
         Button_Bak.setText("还原HOSTS");
         Button_Bak.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -426,6 +565,7 @@ public class HostsTool extends javax.swing.JFrame {
             }
         });
 
+        Button_Bak_Update.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bcsfll/uht/ui/resources/eog.png"))); // NOI18N
         Button_Bak_Update.setText("刷新备份文件列表");
         Button_Bak_Update.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -440,7 +580,7 @@ public class HostsTool extends javax.swing.JFrame {
             .addGroup(Panel_BakLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(Panel_BakLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(ScrollPane_Bak_Table, javax.swing.GroupLayout.DEFAULT_SIZE, 801, Short.MAX_VALUE)
+                    .addComponent(ScrollPane_Bak_Table, javax.swing.GroupLayout.DEFAULT_SIZE, 990, Short.MAX_VALUE)
                     .addComponent(Button_Bak_View, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(ScrollPane_Bak_TextArea)
                     .addComponent(Button_Bak, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -465,8 +605,24 @@ public class HostsTool extends javax.swing.JFrame {
 
         TabbedPane.addTab("还原HOSTS", Panel_Bak);
 
+        Menu_Tool.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bcsfll/uht/ui/resources/tool.png"))); // NOI18N
+        Menu_Tool.setText("工具");
+
+        MenuItem_DNS.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bcsfll/uht/ui/resources/restart.png"))); // NOI18N
+        MenuItem_DNS.setText("刷新缓存使hosts生效");
+        MenuItem_DNS.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MenuItem_DNSActionPerformed(evt);
+            }
+        });
+        Menu_Tool.add(MenuItem_DNS);
+
+        MenuBar.add(Menu_Tool);
+
+        Menu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bcsfll/uht/ui/resources/help.png"))); // NOI18N
         Menu.setText("帮助");
 
+        MenuItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/bcsfll/uht/ui/resources/about.png"))); // NOI18N
         MenuItem.setText("关于");
         MenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -494,15 +650,22 @@ public class HostsTool extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void Button_ViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_ViewActionPerformed
-        try {
-            // TODO add your handling code here:
-            String hostPathName = OSUtil.getInstance().getHostsFilePathName();
-            String localHost = FileUtil.readFile(hostPathName);
-            TextArea_Local.setText(localHost);
-        } catch (Exception ex) {
-            //Logger.getLogger(HostsTool.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(rootPane, ex, "异常信息", JOptionPane.ERROR_MESSAGE);
-        }
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    // TODO add your handling code here:
+                    String hostPathName = OSUtil.getInstance().getHostsFilePathName();
+                    String localHost = FileUtil.readFile(hostPathName);
+                    TextArea_Local.setText(localHost);
+                } catch (Exception ex) {
+                    //Logger.getLogger(HostsTool.class.getName()).log(Level.SEVERE, null, ex);
+                    JOptionPane.showMessageDialog(rootPane, ex, "异常信息", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+        thread.start();
+
     }//GEN-LAST:event_Button_ViewActionPerformed
 
     private void Button_Bak_UpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_Bak_UpdateActionPerformed
@@ -562,9 +725,8 @@ public class HostsTool extends javax.swing.JFrame {
     private void Button_UpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_UpdateActionPerformed
         try {
             // TODO add your handling code here:
-            //先备份
-            String hostPathName = OSUtil.getInstance().getHostsFilePathName();
-            String bakFilePathName = FileUtil.copyFileToBak(hostPathName);
+
+
             //更新
             String netHosts = TextArea_Net.getText().toString();
 
@@ -572,7 +734,9 @@ public class HostsTool extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(rootPane, "请先获取网络上的Hosts", "异常信息", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-
+            //备份
+            String hostPathName = OSUtil.getInstance().getHostsFilePathName();
+            String bakFilePathName = FileUtil.copyFileToBak(hostPathName);
             //写入hosts文件
             FileUtil.writeFile(netHosts, OSUtil.getInstance().getHostsFilePathName());
 
@@ -586,7 +750,7 @@ public class HostsTool extends javax.swing.JFrame {
 
     private void MenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuItemActionPerformed
         // TODO add your handling code here:
-        
+
         Dialog_About.setModal(true);
         Dialog_About.pack();
         Dialog_About.setLocationRelativeTo(HostsTool.this);
@@ -635,27 +799,137 @@ public class HostsTool extends javax.swing.JFrame {
     }//GEN-LAST:event_ToggleButton_LicenseActionPerformed
 
     private void Button_GetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_GetActionPerformed
+
+        // TODO add your handling code here:
+
+        Thread getNetHosThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                boolean gs = jCheckBox2.isSelected();
+                boolean wk = jCheckBox3.isSelected();
+                boolean twttr = jCheckBox5.isSelected();
+                boolean fb = jCheckBox4.isSelected();
+                boolean flkr = jCheckBox6.isSelected();
+                boolean dpbx = jCheckBox7.isSelected();
+                boolean odrv = jCheckBox8.isSelected();
+                boolean yt = jCheckBox9.isSelected();
+                boolean nohl = jCheckBox1.isSelected();
+
+                try {
+                    String netHosts = NetUtil.getInstance().getHtmlInfo(gs, wk, twttr, fb, flkr, dpbx, odrv, yt, nohl);
+                    TextArea_Net.setText(netHosts);
+                } catch (Exception ex) {
+                    Logger.getLogger(HostsTool.class.getName()).log(Level.SEVERE, null, ex);
+                    JOptionPane.showMessageDialog(rootPane, ex, "异常信息", JOptionPane.ERROR_MESSAGE);
+                }
+
+
+            }
+        });
+
+        getNetHosThread.start();
+
+
+    }//GEN-LAST:event_Button_GetActionPerformed
+
+    private void MenuItem_DNSActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuItem_DNSActionPerformed
+        // TODO add your handling code here:
+        String msg = OSUtil.getInstance().reSatrtNet();
+
+        if (msg.indexOf(OSUtil.ERROR_STRING) != -1) {
+            JOptionPane.showMessageDialog(rootPane, msg.substring(msg.indexOf(OSUtil.ERROR_STRING), msg.length()), "提示信息", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(rootPane, "刷新本地缓存成功！", "提示信息", JOptionPane.INFORMATION_MESSAGE);
+        }
+
+    }//GEN-LAST:event_MenuItem_DNSActionPerformed
+
+    private void Button_SaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_SaveActionPerformed
+        // TODO add your handling code here:
+        String netHosts = TextArea_Net.getText().toString();
+
+        if (netHosts == null || "".equals(netHosts)) {
+            JOptionPane.showMessageDialog(rootPane, "请先获取网络上的Hosts", "异常信息", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        // FileChooser_Save.setd
+        //FileChooser_Save.setSelectedFile(new File("hosts" + DateUtil.getCopyTime()));
+
+        try {
+            if (JFileChooser.APPROVE_OPTION == FileChooser_Save.showSaveDialog(this)) {
+                File selectFile = FileChooser_Save.getSelectedFile();
+                if (selectFile.exists()) {
+                    if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(this, "是否要覆盖[" + selectFile.getCanonicalPath() + "] ?", "保存", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)) {
+
+
+                        FileUtil.writeFile(netHosts, selectFile.getCanonicalPath());
+                        JOptionPane.showMessageDialog(rootPane, "保存hosts到[" + selectFile.getCanonicalPath() + "]成功！", "提示信息", JOptionPane.INFORMATION_MESSAGE);
+
+                    } else {
+                        Button_Save.doClick();
+                        FileChooser_Save.setSelectedFile(new File(selectFile.getName()));
+                    }
+                } else {
+                    FileUtil.writeFile(netHosts, selectFile.getCanonicalPath());
+                    JOptionPane.showMessageDialog(rootPane, "保存hosts到[" + selectFile.getCanonicalPath() + "]成功！", "提示信息", JOptionPane.INFORMATION_MESSAGE);
+
+                }
+            }
+        } catch (Exception ex) {
+            //Logger.getLogger(HostsTool.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(rootPane, ex, "异常信息", JOptionPane.ERROR_MESSAGE);
+        }
+        FileChooser_Save.setSelectedFile(new File("hosts" + DateUtil.getCopyTime()));
+    }//GEN-LAST:event_Button_SaveActionPerformed
+
+    private void MenuItem_CopyMailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuItem_CopyMailActionPerformed
         try {
             // TODO add your handling code here:
-            boolean gs = jCheckBox2.isSelected();
-            boolean wk = jCheckBox3.isSelected();
-            boolean twttr = jCheckBox5.isSelected();
-            boolean fb = jCheckBox4.isSelected();
-            boolean flkr = jCheckBox6.isSelected();
-            boolean dpbx = jCheckBox7.isSelected();
-            boolean odrv = jCheckBox8.isSelected();
-            boolean yt = jCheckBox9.isSelected();
-            boolean nohl = jCheckBox1.isSelected();
+            ClipboardUtil.saveTextOnClipboard(Label_Mail.getText().toString().trim());
+            if (Label_Mail.getText().toString().trim().equals(ClipboardUtil.getTextFromClipboard())) {
 
-            String netHosts = NetUtil.getInstance().getHtmlInfo(gs, wk, twttr, fb, flkr, dpbx, odrv, yt, nohl);
-
-            TextArea_Net.setText(netHosts);
+                JOptionPane.showMessageDialog(this, "复制成功", "消息提示", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "复制失败", "消息提示", JOptionPane.ERROR_MESSAGE);
+            }
         } catch (Exception ex) {
             Logger.getLogger(HostsTool.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(rootPane, ex, "异常信息", JOptionPane.ERROR_MESSAGE);
         }
 
-    }//GEN-LAST:event_Button_GetActionPerformed
+    }//GEN-LAST:event_MenuItem_CopyMailActionPerformed
+
+    private void MenuItem_OpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuItem_OpenActionPerformed
+        // TODO add your handling code here:
+        try {
+            new OpenHomePageUtil(Label_HomePage.getText().toString());
+        } catch (Exception ex) {
+            Logger.getLogger(HostsTool.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(rootPane, ex, "异常信息", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_MenuItem_OpenActionPerformed
+
+    private void Label_MailMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_Label_MailMouseEntered
+        // TODO add your handling code here:
+        
+        Label_Mail.setForeground(java.awt.Color.red);
+    }//GEN-LAST:event_Label_MailMouseEntered
+
+    private void Label_MailMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_Label_MailMouseExited
+        // TODO add your handling code here:
+        Label_Mail.setForeground(java.awt.Color.green);
+        
+    }//GEN-LAST:event_Label_MailMouseExited
+
+    private void Label_HomePageMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_Label_HomePageMouseEntered
+        // TODO add your handling code here:
+        Label_HomePage.setForeground(java.awt.Color.red);
+    }//GEN-LAST:event_Label_HomePageMouseEntered
+
+    private void Label_HomePageMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_Label_HomePageMouseExited
+        // TODO add your handling code here:
+        Label_HomePage.setForeground(java.awt.Color.cyan);
+    }//GEN-LAST:event_Label_HomePageMouseExited
 
     /**
      * @param args the command line arguments
@@ -696,13 +970,17 @@ public class HostsTool extends javax.swing.JFrame {
     private javax.swing.JButton Button_Bak_Update;
     private javax.swing.JButton Button_Bak_View;
     private javax.swing.JButton Button_Get;
+    private javax.swing.JButton Button_Save;
     private javax.swing.JButton Button_Update;
     private javax.swing.JButton Button_View;
     private javax.swing.JDialog Dialog_About;
+    private javax.swing.JFileChooser FileChooser_Save;
     private javax.swing.JLabel Label_About;
     private javax.swing.JLabel Label_Auther;
+    private javax.swing.JLabel Label_CopyRight;
     private javax.swing.JLabel Label_Desc;
     private javax.swing.JLabel Label_Help;
+    private javax.swing.JLabel Label_HomePage;
     private javax.swing.JLabel Label_License;
     private javax.swing.JLabel Label_Logo;
     private javax.swing.JLabel Label_Mail;
@@ -711,6 +989,10 @@ public class HostsTool extends javax.swing.JFrame {
     private javax.swing.JMenu Menu;
     private javax.swing.JMenuBar MenuBar;
     private javax.swing.JMenuItem MenuItem;
+    private javax.swing.JMenuItem MenuItem_CopyMail;
+    private javax.swing.JMenuItem MenuItem_DNS;
+    private javax.swing.JMenuItem MenuItem_Open;
+    private javax.swing.JMenu Menu_Tool;
     private javax.swing.JPanel Panel_About;
     private javax.swing.JPanel Panel_Bak;
     private javax.swing.JPanel Panel_Help;
@@ -719,6 +1001,8 @@ public class HostsTool extends javax.swing.JFrame {
     private javax.swing.JPanel Panel_Local;
     private javax.swing.JPanel Panel_Net;
     private javax.swing.JPanel Panel_Params;
+    private javax.swing.JPopupMenu PopupMenu_CopyMail;
+    private javax.swing.JPopupMenu PopupMenu_Open;
     private javax.swing.JScrollPane ScrollPane_Bak_Table;
     private javax.swing.JScrollPane ScrollPane_Bak_TextArea;
     private javax.swing.JScrollPane ScrollPane_Help;
@@ -743,5 +1027,14 @@ public class HostsTool extends javax.swing.JFrame {
     private javax.swing.JCheckBox jCheckBox7;
     private javax.swing.JCheckBox jCheckBox8;
     private javax.swing.JCheckBox jCheckBox9;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     // End of variables declaration//GEN-END:variables
 }

@@ -4,6 +4,7 @@
  */
 package org.bcsfll.uht.ui.utiliy;
 
+import org.bcsfll.uht.utiliy.DateUtil;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -43,7 +44,7 @@ public class DateUtilTest {
     public void testGetNow() {
         System.out.println("getNow");
         String expResult = "";
-        String result = DateUtil.getCopyToBakTime();
+        String result = DateUtil.getCopyTime();
         System.out.println(result);
         //assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
