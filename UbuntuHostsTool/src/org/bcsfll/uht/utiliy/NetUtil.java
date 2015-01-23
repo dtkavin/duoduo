@@ -38,7 +38,10 @@ public class NetUtil {
     public static NetUtil getInstance() {
         if (instance == null) {
             instance = new NetUtil();
+        }else{
+            hostspasscode=instance.createRandomCookies();
         }
+        
         return instance;
     }
 
@@ -73,7 +76,7 @@ public class NetUtil {
         //URL url = new URL("http://serve.netsh.org/pub/hosts.php?passcode=13008&gs=on&wk=on&twttr=on&fb=on&flkr=on&dpbx=on&odrv=on&yt=on&nolh=on");
         URL url = new URL(createUrl(hostspasscode, gs, wk, twttr, fb, flkr, dpbx, odrv, yt, nohl));
         //System.out.println(cookie);
-       // System.out.println(url.toString());
+        System.out.println(url.toString());
         
        conn = (HttpURLConnection) url.openConnection();
 
