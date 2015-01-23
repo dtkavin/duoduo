@@ -1,1 +1,19 @@
 公共工程 可供分享! - -#
+工程说明
+
+java_utils 
+	文件夹下都是一些没有用的文件，业余时间在帮项目组封装工具类的产物。
+UbuntuHostsTool
+	ubuntu下在线更新hosts 并修改本机hosts 的小工具。
+里面包括源代码及doc说明，为什么都有源代码了 还要提交说明？
+
+运行时本机需要有JDK1.6或1.6以上版本，
+
+安装的简便方式
+
+sudo add-apt-repository ppa:webupd8team/java
+sudo apt-get update && sudo apt-get install oracle-java6-installer
+
+faenza-icon-theme-ubuntu-unity_1.3.2_all.deb
+	这是一个在faenza-icon-theme基础上修改的包，针对ubuntu14.04
+
