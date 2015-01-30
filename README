@@ -17,6 +17,9 @@ sudo apt-get update && sudo apt-get install oracle-java6-installer
 faenza-icon-theme-ubuntu-unity_1.3.2_all.deb
 	这是一个在faenza-icon-theme基础上修改的包，针对ubuntu14.04
 
+JChat
+
+基于socket的局域网通信工具 没有gui
 有问题 
 
 请联系bcsfll<bcsflilong@yeah.net> 
