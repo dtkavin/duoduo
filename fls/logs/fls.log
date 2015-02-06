@@ -1,0 +1,1 @@
+[ERROR][org.codehaus.xfire.transport.http.HttpChannel:129][15:12:51,765][Server returned error code = 404 for URI : http://localhost:8080/fls/services/FlsWebService. Check server logs for details]

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="org.fls.common.base.entitys">
+    <class name="FlsLogEntity" table="fls_log_t">
+        <id name="log_id">
+            <generator class="uuid.hex"/>
+        </id>
+		
+        <property name="log_type"    column="config_key"    type="string"   length="25" not-null="false"/>
+        <property name="log_user_id"   column="log_user_id"    type="string"   length="255" not-null="false"/>
+        <property name="log_user_ip"   column="log_user_ip"    type="string"   length="255" not-null="false"/>
+        <property name="log_date"    column="log_date"    type="timestamp"    not-null="false"/>
+		
+    </class>
+</hibernate-mapping>

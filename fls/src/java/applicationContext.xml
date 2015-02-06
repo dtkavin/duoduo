@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+项目spring及hibernate 配置
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+    <!-- 配置Spring数据源 -->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+          destroy-method="close">
+        <property name="driverClass" value="com.mysql.jdbc.Driver" />
+        <property name="jdbcUrl"
+                  value="jdbc:mysql://localhost:3306/fls_db?useUnicode=true&amp;characterEncoding=UTF-8" />
+        <property name="user" value="root" />
+        <property name="password" value="zx" />
+        <!--初始化时获取的连接数，取值应在minPoolSize与maxPoolSize之间。Default: 3 -->
+        <property name="initialPoolSize" value="1" />
+        <!--连接池中保留的最小连接数。 -->
+        <property name="minPoolSize" value="1" />
+        <!--连接池中保留的最大连接数。Default: 15 -->
+        <property name="maxPoolSize" value="15" />
+        <!--最大空闲时间,60秒内未使用则连接被丢弃。若为0则永不丢弃。Default: 0 -->
+        <property name="maxIdleTime" value="60" />
+        <!--当连接池中的连接耗尽的时候c3p0一次同时获取的连接数。Default: 3 -->
+        <property name="acquireIncrement" value="3" />
+        <!--每60秒检查所有连接池中的空闲连接。Default: 0 -->
+        <property name="idleConnectionTestPeriod" value="60" />
+    </bean>
+    <!-- 集成Hibernate -->
+    <bean id="sessionFactory"
+          class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        
+        <property name="mappingDirectoryLocations">
+            <value>classpath:org/fls/common/base/entitys/config</value>
+        </property>
+        
+        <property name="mappingResources">
+            <list>
+                <value>org/fls/user/entity/config/FlsUserEntity.hbm.xml</value>
+                <value>org/fls/theme/entity/config/FlsThemeEntity.hbm.xml</value>
+                <value>org/fls/reply/entity/config/FlsReplyEntity.hbm.xml</value>
+                <value>org/fls/userphoto/entity/config/FlsUserPhotoEntity.hbm.xml</value>
+                <value>org/fls/test/entity/config/FlsBugEntity.hbm.xml</value>
+            </list>
+        </property>
+        
+        <property name="hibernateProperties">
+            <value>
+                hibernate.dialect=org.hibernate.dialect.MySQL5Dialect
+                hibernate.hbm2ddl.auto=update
+                hibernate.show_sql=false
+                hibernate.format_sql=false
+                <!--
+                hibernate.current_session_context_class=thread
+                -->
+                hibernate.cache.use_second_level_cache=true
+                hibernate.cache.provider_class=org.hibernate.cache.EhCacheProvider
+                hibernate.cache.use_query_cache=true
+            </value>
+        </property>
+    </bean>
+    <!-- Spring 负责事务管理 -->
+    <bean id="txManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+	  
+    <!--使用基于注解方式配置事务 -->
+    <tx:annotation-driven transaction-manager="txManager" />
+    <!-- 扫描 -->
+    <context:component-scan base-package="org.fls"></context:component-scan>
+    <!-- 打�注解处理器 -->
+    <context:annotation-config />
+    <!-- AOP -->
+    <aop:aspectj-autoproxy proxy-target-class="false"/>  
+    <aop:aspectj-autoproxy/> 
+    <!-- 消息对象-->
+    <bean id="msgEntity" class="org.fls.common.base.entitys.FlsMsgEntity" ></bean>
+    <!-- 定时任务 -->
+    <!-- 相当于application作用域 定时器中使用  -->
+    <bean id="servletContext" class="org.springframework.web.context.support.ServletContextFactoryBean" ></bean>
+     <!-- 配置定时任务的执行器  -->
+    <bean id="updateApplicationTask" class="org.springframework.scheduling.quartz.JobDetailBean">   
+        <property name="jobClass">   
+            <value>org.fls.common.timer.FlsApplicationUpdateTimer</value>
+        </property>   
+        <property name="jobDataAsMap">   
+            <map>   
+                <entry key="initService">   
+                    <ref bean="InitService"/>   
+                </entry>
+            	 <entry key="servletContext">
+                    <ref bean="servletContext"/>
+                </entry>
+            </map>
+        </property>
+    </bean>  
+	 
+    <!--触发器  间隔执行-->
+    <bean id="updateApplicationSimpleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">   
+        <property name="jobDetail" ref="updateApplicationTask" />   
+        <property name="startDelay">   
+            <value>10000</value>   
+        </property>   
+        <property name="repeatInterval">   
+            <value>21600000</value>   
+        </property>   
+    </bean>
+    <!--触发器  周期执行-->
+    
+    <bean id="updateApplicationCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">   
+        <property name="jobDetail" ref="updateApplicationTask" />   
+        <property name="cronExpression">   
+            <value>55 35 10 ? * MON-FRI</value>   
+        </property>   
+    </bean>  
+    
+    <!-- 启动定时 -->
+    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">   
+        <property name="triggers">   
+            <list>
+                <ref bean="updateApplicationSimpleTrigger"/>
+                <ref bean="updateApplicationCronTrigger"/>
+            </list>   
+        </property>   
+    </bean> 
+    
+</beans>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="org.fls.reply.entity">
+    <class name="FlsReplyEntity" table="fls_reply_t">
+        <cache usage="read-write" region="org.fls.reply.entity.FlsReplyEntity"/>
+        <id name="reply_id" column="reply_id" >
+            <generator class="uuid.hex"/>
+        </id>
+        <property name="reply_content"    column="reply_content"    type="string"   length="300" not-null="true"/>
+        <property name="reply_newtime"    column="reply_newtime"    type="timestamp"    not-null="true"/>
+		
+        <property name="reply_index"    column="reply_index"    type="integer"      not-null="true" />
+		
+        <many-to-one name="reply_theme" column="fk_on_reply_to_theme_themeid" lazy="false"  fetch="join"  index="reply_index"/>
+                                                 
+        <many-to-one name="reply_owner" column="fk_on_reply_to_user_userid" lazy="false"  fetch="join" index="reply_index"/>
+                                                
+    </class>
+</hibernate-mapping>

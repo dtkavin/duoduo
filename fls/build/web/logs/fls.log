@@ -1,0 +1,8 @@
+[INFO ][com.opensymphony.xwork2.config.providers.XmlConfigurationProvider:31][15:52:35,162][Parsing configuration file [struts-default.xml]]
+[INFO ][com.opensymphony.xwork2.config.providers.XmlConfigurationProvider:31][15:52:35,329][Parsing configuration file [struts-plugin.xml]]
+[INFO ][com.opensymphony.xwork2.config.providers.XmlConfigurationProvider:31][15:52:35,355][Parsing configuration file [struts.xml]]
+[INFO ][com.opensymphony.xwork2.config.impl.DefaultConfiguration:31][15:52:35,362][Overriding property struts.i18n.reload - old value: false new value: true]
+[INFO ][org.apache.struts2.config.BeanSelectionProvider:31][15:52:35,366][Loading global messages from FLS_I18N]
+[INFO ][org.apache.struts2.spring.StrutsSpringObjectFactory:31][15:52:35,442][Initializing Struts-Spring integration...]
+[INFO ][com.opensymphony.xwork2.spring.SpringObjectFactory:31][15:52:35,443][Setting autowire strategy to name]
+[INFO ][org.apache.struts2.spring.StrutsSpringObjectFactory:31][15:52:35,443][... initialized Struts-Spring integration successfully]

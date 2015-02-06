@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="org.fls.test.entity">
+    <class name="FlsBugEntity" table="fls_bug_t">
+        <id name="id">
+            <generator class="uuid.hex"/>
+        </id>
+		
+        <property name="conent"    column="conent"    type="string"   length="1024" not-null="false"/>
+        <property name="flag"   column="flag"    type="string"   length="5" not-null="false"/>
+        <property name="createDate"    column="createDate"    type="timestamp"    not-null="false"/>
+
+        
+        <many-to-one name="user" column="fk_on_bug_to_user_userid"  lazy="false"  fetch="join"/>
+    </class>
+</hibernate-mapping>

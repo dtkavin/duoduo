@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--用户映射文件-->
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="org.fls.user.entity">
+
+    <class name="FlsUserEntity" table="fls_user_t">
+	
+        <cache usage="read-write" region="org.fls.user.entity.FlsUserEntity"/>
+
+        <id name="user_id" column="user_id">
+            <generator class="uuid.hex"/>
+        </id>
+        <property name="user_mail"     column="user_mail"     type="string"   length="50" not-null="true"/>
+        <property name="user_name"     column="user_name"     type="string"   length="50" not-null="true"/>
+        <property name="user_password" column="user_password" type="string" 	 length="16"  not-null="true"/>
+        <property name="user_power"    column="user_power"    type="string"   length="4" not-null="false" />
+        <property name="user_imageurl" column="user_imageurl" type="string"   length="500" not-null="false" />
+        <property name="user_aboutme"  column="user_aboutme" type="string"   length="255" not-null="false" />
+        <property name="user_wheretogo"    column="user_wheretogo"  type="string"       length="255" not-null="false" />
+		
+        <property name="user_gender"       column="user_gender"     type="string"       length="4" not-null="false" />
+        <property name="user_website"      column="user_website"    type="string"       length="255" not-null="false" />
+        <property name="user_underwrite"   column="user_underwrite" type="string"       length="255" not-null="false" />
+        <property name="user_browse"   column="user_browse" type="integer"       not-null="false" />
+        <property name="user_hot"   column="user_hot" type="integer"       not-null="false" />
+        <property name="user_flag"   column="user_flag" type="string"       not-null="true" />
+		
+        <property name="user_location"     column="user_location"   type="string"       length="255" not-null="false" />
+        <property name="user_province"     column="user_province"   type="string"       length="255" not-null="false" />
+        <property name="user_city"     column="user_city"   type="string"       length="255" not-null="false" />
+        <property name="user_area"     column="user_area"   type="string"       length="255" not-null="false" />
+		
+		
+	
+        <set name="user_issueThemes" lazy="false"  fetch="join" order-by="theme_index desc"  >
+            <key column="fk_on_theme_to_user_userid"/>         
+            <one-to-many class="org.fls.theme.entity.FlsThemeEntity" />
+        </set>
+        
+        <set name="user_issueReplys" lazy="false"  fetch="join" order-by="reply_index desc" >
+            <key column="fk_on_reply_to_user_userid"/>  
+            <one-to-many class="org.fls.reply.entity.FlsReplyEntity" />
+        </set>
+	   
+        <set name="user_followUsers" table="fls_user_fllow_t" lazy="false"  fetch="join" >
+            <key column="fk_user_fllow_from_id"/>
+            <many-to-many class="FlsUserEntity" column="fk_user_fllow_to_id"/>
+        </set>
+      
+        <set name="user_funUsers" table="fls_user_fllow_t" lazy="false"  fetch="join" >
+            <key column="fk_user_fllow_to_id"/>
+            <many-to-many class="FlsUserEntity" column="fk_user_fllow_from_id"/>
+        </set>
+  	   
+  	   
+        <set name="user_keepThemes" table="fls_user_fav_theme_t" lazy="false"  fetch="join" >
+            <key column="fk_user_fav_userid"/>
+            <many-to-many class="org.fls.theme.entity.FlsThemeEntity" column="fk_user_fav_themeid"/>
+        </set>
+  	 
+        <one-to-one name="user_photo" property-ref="photo_owner" lazy="false"  fetch="join"  cascade="all"/>
+  	 
+        
+       <set name="user_bugs" lazy="false"  fetch="join"   >
+            <key column="fk_on_bug_to_user_userid"/>         
+            <one-to-many class="org.fls.test.entity.FlsBugEntity" />
+        </set>
+        
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,42 @@
+@charset "utf-8";
+/* CSS Document */
+
+#profile_left {float:left; width:100px;margin-top:10px;}
+#profile_left li { padding-left:10px; padding-bottom:5px; padding-top:5px; border-bottom:1px solid #CCDCEF; font-family:Arial, Helvetica, sans-serif}
+#profile_left li a { color:#578CCA; font-size:13px; text-decoration:none}
+#profile_left li a span { color:#000; display:block; font-size:24px; font-weight:bold;}
+
+#profile_right {float:left; position:relative; width:575px; margin-left:10px;padding-top:10px; display:inline; }
+#profile_right #score_area {position:absolute;width:81px;height:118px;left:350px;background:url(score_bg.png) no-repeat;}
+#profile_right #score_area h2 {color:#fff;text-align:center;margin-top:38px;}
+.profile_title { float:left; padding-bottom:5px; width:100%;}
+.profile_title h1.title a { float:left; margin:0; padding:0; font-size:26px; font-weight:bold; color:#000; text-decoration:none;}
+.profile_title span.underwrite { float:left; color:#999; font-size:14px; padding-top:10px;}
+.profile_title span.i { color:#578CCA;font-size:14px; line-height:18px; word-break:break-all; word-wrap:break-word;}
+.profile_title span.i a {color:#578CCA; text-decoration:none}
+.profile_title span.i a:hover {text-decoration:underline}
+
+.addfollow {float:right; font-weight:bold; color:#FFF;text-align:center;width:60px; height:29px; line-height:29px;text-decoration:none; background:url(global.gif); background-position:-70px -104px; cursor:pointer;}
+.editinfo {float:right; font-weight:bold; color:#FFF;text-align:center;width:111px; height:29px; line-height:29px;text-decoration:none; background:url(global.gif); background-position:-70px -162px;; cursor:pointer;}
+
+.addfollow:hover {background-image:url(global.gif); background-position:-70px -133px;}
+.addfollow a {color:#fff;}
+.delfollow {float:right; font-weight:bold; color:#000;text-align:center;width:59px; height:29px; padding-left:15px; line-height:29px;text-decoration:none; background:url(global.gif); background-position:-181px -191px; cursor:pointer;}
+.delfollow:hover {background-image:url(global.gif); background-position:-255px -191px;}
+#profile_right_nav { color:#1B5790; line-height:24px;font-size:14px; font-weight:bold;border-bottom:1px solid #CCDCEF;}
+
+#profile_right #nothing_found { float:left; width:570px; line-height:24px; text-align:center; font-size:18px; font-weight:bold; margin-top:10px; padding-top:20px; padding-bottom:15px; border:2px dashed #CCDCEF;}
+#profile_right #nothing_found span { color:#B1B5B5; font-weight:normal; font-size:13px;}
+
+
+#set_header { font-size:26px; font-weight:bold; padding-bottom:5px;}
+.set_header { font-size:26px; font-weight:bold; padding-bottom:5px;}
+.boundary {border-top:1px solid #CCDCEF;background:#E5EDF7; overflow:hidden; height:3px;}
+.set_form_fields { padding:10px 0 5px 10px;}
+.set_form_fields label.title {width:100%; font-weight:bold; padding-bottom:5px}
+.set_form_fields label.lgender {color:#666; margin-right:10px; float:none}
+.set_form_fields input, .set_form_fields textarea { color:#80A1C1}
+.set_form_fields input:focus, .set_form_fields textarea:focus { color:#999;}
+.set_profile_btn {width:111px; color:#FFF; cursor:pointer; line-height:29px; height:29px; font-weight:bold;text-align:center; background:url(global.gif); background-position:-70px -162px; display:block; border:none}
+.set_profile_btn:hover {background-image:url(global.gif); background-position:-70px -191px;}
+.set_profile_btn:active {background-image:url(global.gif); background-position:-70px -220px;}

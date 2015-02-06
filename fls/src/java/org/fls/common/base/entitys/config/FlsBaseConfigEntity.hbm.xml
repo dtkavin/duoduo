@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="org.fls.common.base.entitys">
+    <class name="FlsBaseConfigEntity" table="fls_config_t">
+        <id name="config_id">
+            <generator class="native"/>
+        </id>
+        <property name="config_key"    column="config_key"    type="string"   length="300" not-null="false"/>
+        <property name="config_value"   column="config_value"    type="string"   length="300" not-null="false"/>
+        <property name="config_db_value"   column="config_db_value"    type="string"   length="300" not-null="false"/>
+		
+        <property name="config_flag"    column="config_flag"    type="string"   length="300" not-null="false"/>
+        <property name="config_modifydate"    column="config_modifydate"    type="string"   length="300" not-null="false"/>
+		
+    </class>
+</hibernate-mapping>

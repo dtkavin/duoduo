@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="org.fls.theme.entity">
+    <class name="FlsThemeEntity" table="fls_theme_t">
+        
+        <cache usage="read-write" region="org.fls.theme.entity.FlsThemeEntity"/>
+        
+        <id name="theme_id" column="theme_id" >
+            <generator class="uuid.hex"/>
+        </id>
+        <version name="version" ></version>
+		
+		
+        <property name="theme_content"    column="theme_content"    type="string"   length="300" not-null="true"/>
+        <property name="theme_category"   column="theme_category"   type="string"   length="36" not-null="true"/>
+		
+        <property name="theme_tags1"   column="theme_tags1"   type="string"   length="36" not-null="false"/>
+        <property name="theme_tags2"   column="theme_tags2"   type="string"   length="36" not-null="false"/>
+        <property name="theme_tags3"   column="theme_tags3"   type="string"   length="36" not-null="false"/>
+		
+        <property name="theme_newtime"     column="theme_newtime"     type="timestamp"    not-null="true" />
+        <property name="theme_updatetime"  column="theme_updatetime"  type="timestamp"    not-null="true"/>
+		
+        <property name="theme_yes" column="theme_yes"     type="integer"    not-null="true" />
+        <property name="theme_no"  column="theme_no"  type="integer"    not-null="true"/>
+		
+        <property name="theme_index" column="theme_index"  type="integer"   not-null="true"/>
+		
+        <set name="theme_replys" lazy="false"  fetch="join" order-by="reply_index desc">
+            <key column="fk_on_reply_to_theme_themeid"/>  
+            <one-to-many class="org.fls.reply.entity.FlsReplyEntity" />
+        </set>
+        
+        <set name="thems_favs" table="fls_user_fav_theme_t" lazy="false"  fetch="join" >
+            <key column="fk_user_fav_themeid"/>
+            <many-to-many class="org.fls.user.entity.FlsUserEntity" column="fk_user_fav_userid"/>
+        </set>
+        
+        <many-to-one name="theme_owner" column="fk_on_theme_to_user_userid"  lazy="false"  fetch="join" index="theme_index"/>
+	   
+    </class>
+</hibernate-mapping>

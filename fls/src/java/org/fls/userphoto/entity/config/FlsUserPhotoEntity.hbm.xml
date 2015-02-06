@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="org.fls.userphoto.entity">
+  <class name="FlsUserPhotoEntity" table="fls_userphoto_t">
+    <id column="photo_id" name="photo_id">
+      <generator class="uuid.hex"/>
+    </id>
+    <property column="photo_blob" name="photo_blob" not-null="false" type="blob"/>
+    <many-to-one column="fk_on_photo_to_user_userid" name="photo_owner" not-null="true" unique="true"/>
+  </class>
+</hibernate-mapping>

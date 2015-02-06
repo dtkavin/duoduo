@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+项目struts2配置
+-->
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+    
+    <constant name="struts.serve.static.browserCache" value="false" />
+    <constant name="struts.configuration.xml.reload" value="true" />
+    <constant name="struts.devMode" value="true" />
+    
+    <constant name="struts.action.excludePattern" value="/services/*,/services/FlsWebService*" />
+    <constant name="struts.multipart.maxSize" value="208909129"/>
+    <constant name="struts.ui.theme" value="simple" />
+    <constant name="struts.i18n.encoding" value="UTF-8" />
+    <constant name="struts.custom.i18n.resources" value="FLS_I18N"></constant>
+    <constant name="struts.url.includeParams" value="none" />
+    
+    <constant name="struts.objectFactory" value="spring" />
+    <constant name="struts.objectFactory.spring.autoWire.alwaysRespect" value="true"/> 
+    <!--处理404错误-->	  
+    <package name="default" extends="struts-default">
+        <default-action-ref name="notFound" />
+        <action name="notFound">
+            <!--
+            <result>/WEB-INF/PROJECT-HOME/ErrorPages/Error404.jsp</result>
+            -->
+            <result>/index.jsp</result>
+            
+        </action>
+    </package>
+    <!--虚拟包 会被其他包继承-->
+    <package name="flsbase-pakage" extends="struts-default" abstract="true"> 
+        <!--定义拦截器及拦截器栈-->
+        <interceptors>
+            <!--权限管理拦截器-->
+            <interceptor name="FlsPowerInterceptor" class="FlsPowerInterceptor"/>
+            <!--cookie登录处理-->
+            <interceptor name="FlsCookieLoginInterceptor" class="FlsCookieLoginInterceptor"/>
+            <!--清理错误-->
+            <interceptor name="FlsClearFieldErrorInterceptor" class="FlsClearFieldErrorInterceptor"/>
+            
+            <interceptor-stack name="FlsPowerInterceptorStack">
+                <interceptor-ref name="defaultStack"/>
+                <interceptor-ref name="FlsPowerInterceptor"/>
+            </interceptor-stack>
+            <interceptor-stack name="FlsCookieLoginInterceptorStack">
+                <interceptor-ref name="defaultStack"/>
+                <interceptor-ref name="FlsCookieLoginInterceptor">
+                    <param name="serachtype">MAX_NEW</param>
+                </interceptor-ref>
+            </interceptor-stack>
+            <interceptor-stack name="FlsClearFieldErrorInterceptorStack">
+                <interceptor-ref name="defaultStack"/>
+                <interceptor-ref name="FlsClearFieldErrorInterceptor"/>
+            </interceptor-stack>
+        </interceptors>	
+        <!--全局映射-->
+        <global-results>
+            <result name="error">/WEB-INF/PROJECT-HOME/ErrorPages/CommonError.jsp</result>
+            <result name="login">/WEB-INF/PROJECT-HOME/UserPages/Login.jsp</result>
+            <!-- 用于对cookie登录的控制 -->
+            <result name="success_main_cookie" type="chain">  
+                <param name="method">queryTheme</param>
+                <param name="actionName">ThemeAction</param>  
+                <param name="namespace">/theme</param>   
+            </result> 
+            <result name="success_authenticator_cookie">/WEB-INF/PROJECT-HOME/Authenticator.jsp</result>
+        </global-results>
+        <!--处理异常-->
+        <global-exception-mappings>
+            <exception-mapping result="error" exception="java.lang.Exception"></exception-mapping>
+        </global-exception-mappings>
+    </package> 
+    <!--核心导航包-->
+    <package name="index" namespace="/" extends="flsbase-pakage">
+        <!--声明默认拦截器 为FlsCookieLoginInterceptorStack-->
+        <default-interceptor-ref  name="FlsCookieLoginInterceptorStack" ></default-interceptor-ref>
+        <!--导航Action-->
+        <action name="NavigateAction"  method="navigate"  class="NavigateAction">
+            <param name="serachtype">MAX_NEW</param>
+            <param name="currentPage">1</param>
+            <result name="index" type="chain">  
+                <param name="method">queryTheme</param>
+                <param name="actionName">ThemeAction</param>  
+                <param name="namespace">/theme</param>  
+            </result>  
+            <result name="register" type="dispatcher">/WEB-INF/PROJECT-HOME/UserPages/Register.jsp</result>
+            <result name="login" type="dispatcher">/WEB-INF/PROJECT-HOME/UserPages/Login.jsp</result>
+            <result name="edituserinfo" type="dispatcher">/WEB-INF/PROJECT-HOME/UserInfoPages//EditUserInfo.jsp</result>
+            <result name="chgpass" type="dispatcher">/WEB-INF/PROJECT-HOME/UserInfoPages/ChgPassWord.jsp</result>
+            <result name="logout" type="chain">  
+                <param name="method">logout</param>
+                <param name="actionName">UserAction</param>  
+                <param name="namespace">/login</param>  
+            </result>  
+            <result name="about" type="dispatcher">/WEB-INF/PROJECT-HOME/SystemPages/About.jsp</result>
+            <result name="help" type="dispatcher">/WEB-INF/PROJECT-HOME/SystemPages/Help.jsp</result>
+            <result name="forget" type="dispatcher">/WEB-INF/PROJECT-HOME/SystemPages/Help.jsp</result>
+            <result name="advert" type="dispatcher">/WEB-INF/PROJECT-HOME/SystemPages/Advert.jsp</result>
+            <result name="account" type="dispatcher">/WEB-INF/PROJECT-HOME/SystemPages/Account.jsp</result>
+            <result name="inWall" type="dispatcher">/WEB-INF/PROJECT-HOME/WallPages/inWall.jsp</result>
+            <result name="license" type="dispatcher">/WEB-INF/PROJECT-HOME/SystemPages/License.jsp</result>
+		    
+            <result name="bug" type="dispatcher">/WEB-INF/PROJECT-HOME/TestPages/SubmitBug.jsp</result>
+            <result name="face" type="dispatcher">/WEB-INF/PROJECT-HOME/UserInfoPages/MyJsp.jsp</result>
+        </action>
+    </package>
+    <!--主题及回复处理包-->
+    <package name="theme" namespace="/theme" extends="flsbase-pakage">
+        <default-interceptor-ref  name="FlsClearFieldErrorInterceptorStack"/>
+        <!--主题处理action-->
+        <action name="ThemeAction"   class="ThemeAction">
+            <result name="success" type="dispatcher">/WEB-INF/PROJECT-HOME/index.jsp</result>
+            <result name="success_send" type="chain">  
+                <param name="method">queryTheme</param>
+                <param name="actionName">ThemeAction</param>  
+                <param name="namespace">/theme</param>  
+            </result>
+        </action>
+        <!--回复处理action-->	
+        <action name="ReplyAction" class="ReplyAction">
+            <result name="success" type="dispatcher">/WEB-INF/PROJECT-HOME/ThemePages/Reply.jsp</result>
+            <result name="success_send" type="chain">  
+                <param name="method">queryReply</param>
+                <param name="actionName">ReplyAction</param>  
+                <param name="namespace">/theme</param>  
+            </result>
+        </action>
+    </package>
+    <!--用户相关操作处理包-->
+    <package name="user" namespace="/user" extends="flsbase-pakage">
+        <default-interceptor-ref  name="FlsClearFieldErrorInterceptorStack"/>
+        <!--用户信心处理action-->
+        <action name="UserInfoAction"   class="UserInfoAction">
+            <interceptor-ref name="FlsPowerInterceptorStack"/>
+            <result name="success" type="dispatcher">/WEB-INF/PROJECT-HOME/UserInfoPages/MyJsp.jsp</result>
+            <result name="success_saveuserinfo" >/WEB-INF/PROJECT-HOME/UserInfoPages/EditUserInfo.jsp</result>
+            <result name="success_viewuserinfo" >/WEB-INF/PROJECT-HOME/UserInfoPages/ViewUserInfo.jsp</result>
+            <result name="success_viewreply" >/WEB-INF/PROJECT-HOME/UserInfoPages/ViewUserReply.jsp</result>
+            <result name="success_viewfuns" >/WEB-INF/PROJECT-HOME/UserInfoPages/ViewUserFuns.jsp</result>
+            <result name="success_viewfave" >/WEB-INF/PROJECT-HOME/UserInfoPages/ViewUserFave.jsp</result>
+            <result name="input_chgpass" type="dispatcher">/WEB-INF/PROJECT-HOME/UserInfoPages/ChgPassWord.jsp</result>
+            <result name="success_chgpass" type="dispatcher">/WEB-INF/PROJECT-HOME/UserPages/Login.jsp</result>
+        </action>
+        <!--用户加关注处理action-->
+        <action name="FllowAction" class="FllowAction">
+            <!--
+            <interceptor-ref name="FlsPowerInterceptorStack"/>
+            -->
+            <result type="stream">
+                <param name="contentType">text/html</param>
+                <param name="inputName">inputStream</param>
+            </result>
+        </action>
+        <!--用户照片处理action-->
+        <action name="PhotoAction" class="PhotoAction">
+            <result type="stream">
+                <param name="contentType">image/jpeg</param>
+                <param name="inputName">photoinputStream</param>
+            </result>
+        </action>
+    </package>
+    <!--用户登录注销验证操作处理包-->
+    <package name="login" namespace="/login" extends="flsbase-pakage">
+        <default-interceptor-ref  name="FlsClearFieldErrorInterceptorStack"/>
+      
+        <action name="UserAction" class="UserAction">
+            <result name="success_login">/WEB-INF/PROJECT-HOME/UserPages/Login.jsp</result>
+            <result name="success_authenticator">/WEB-INF/PROJECT-HOME/UserPages/Authenticator.jsp</result>
+            <result name="input_register">/WEB-INF/PROJECT-HOME/UserPages/Register.jsp</result>
+            <result name="input_login">/WEB-INF/PROJECT-HOME/UserPages/Login.jsp</result>
+            <result name="success_main" type="chain">  
+                <param name="method">queryTheme</param>
+                <param name="actionName">ThemeAction</param>  
+                <param name="namespace">/theme</param>  
+            </result> 
+            <result name="success_logout" type="chain">  
+                <param name="method">queryTheme</param>
+                <param name="actionName">ThemeAction</param>  
+                <param name="namespace">/theme</param>  
+            </result>  
+        </action>
+    </package>
+    <!--验证码生成-->
+    <package name="security" namespace="/security" extends="struts-default">
+        <action name="SecurityCodeImageAction"  class="SecurityCodeImageAction">
+            <result name="success" type="stream">
+                <param name="contentType">image/jpeg</param>
+                <param name="inputName">imageStream</param>
+                <param name="bufferSize">2048</param>
+            </result>
+        </action>
+        
+    </package>
+    <package name="bug" namespace="/bug" extends="flsbase-pakage">
+        <action name="BugAction"  class="BugAction">
+            <result name="success" type="dispatcher">/WEB-INF/PROJECT-HOME/TestPages/SubmitBug.jsp</result>
+            
+        </action>
+    </package>
+</struts>
